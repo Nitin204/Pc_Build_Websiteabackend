@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.pcbuild.model.User;
@@ -20,22 +22,47 @@ public class AuthController {
 
     // REGISTER
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.register(user);
+    public ResponseEntity<?> register(@RequestBody User user) {
+        try {
+            User savedUser = userService.register(user);
+            return ResponseEntity.ok(savedUser);
+        } catch (RuntimeException e) {
+            if ("EMAIL_ALREADY_EXISTS".equals(e.getMessage())) {
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body("Email already registered");
+            }
+            return ResponseEntity.badRequest().body("Registration failed");
+        }
     }
+
 
     // LOGIN
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody User request) {
-        Optional<User> user = userService.login(request.getEmail(), request.getPassword());
+    public ResponseEntity<?> login(@RequestBody User request) {
 
-        if (user.isPresent()) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("user", user.get());
-            response.put("token", "dummy-token"); // frontend expects token
-            return response;
+        Optional<User> userOpt =
+                userService.login(request.getEmail(), request.getPassword());
+
+        if (userOpt.isEmpty()) {
+            // ❌ DO NOT throw RuntimeException
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Invalid email or password"));
         }
 
-        throw new RuntimeException("Invalid email or password");
+        User user = userOpt.get();
+
+        // ✅ SAFE RESPONSE (NO PASSWORD)
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("id", user.getId());
+        userMap.put("name", user.getFirstName());
+        userMap.put("email", user.getEmail());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", "dummy-token"); // ok for now
+        response.put("user", userMap);
+
+        return ResponseEntity.ok(response);
     }
 }

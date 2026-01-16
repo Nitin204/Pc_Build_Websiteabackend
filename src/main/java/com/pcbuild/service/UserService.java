@@ -15,6 +15,11 @@ public class UserService {
     private UserRepository userRepository;
 
     public User register(User user) {
+
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RuntimeException("EMAIL_ALREADY_EXISTS");
+        }
+
         return userRepository.save(user);
     }
 
@@ -38,4 +43,7 @@ public class UserService {
 
         return userRepository.save(user);
     }
+    
+    
+    
 }
