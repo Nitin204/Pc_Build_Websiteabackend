@@ -65,4 +65,13 @@ public class AuthController {
 
         return ResponseEntity.ok(response);
     }
+    
+    
+ // ✅ GET TOTAL USERS COUNT (Admin Dashboard)
+    @GetMapping("/users/getusercount")
+    public ResponseEntity<Long> getTotalUsersCount() {
+        long count = userService.getTotalUsersCount();
+        return ResponseEntity.ok(count);
+    }
+
 }

@@ -10,6 +10,7 @@ import com.pcbuild.model.Order;
 import com.pcbuild.model.User;
 import com.pcbuild.repository.OrderRepository;
 import com.pcbuild.repository.UserRepository;
+import com.pcbuild.service.OrderService;
 
 @RestController
 @RequestMapping("/api/order")
@@ -20,6 +21,9 @@ public class OrderController {
     private OrderRepository orderRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private OrderService orderService;
+
  // ✅ PLACE ORDER (PaymentCo.jsx)
     @PostMapping
     public ResponseEntity<Order> placeOrder(@RequestBody Order order) {
@@ -70,6 +74,21 @@ public class OrderController {
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         orderRepository.delete(order);
         return ResponseEntity.ok("Order deleted successfully");
+    }
+    
+    
+    
+ // ✅ GET TOTAL ORDER COUNT (Admin Dashboard)
+    @GetMapping("/count")
+    public ResponseEntity<Long> getTotalOrderCount() {
+        long count = orderService.getTotalOrderCount();
+        return ResponseEntity.ok(count);
+    }
+ // ✅ GET TOTAL INCOME (Admin Dashboard)
+    @GetMapping("/income")
+    public ResponseEntity<Double> getTotalIncome() {
+        double totalIncome = orderService.getTotalIncome();
+        return ResponseEntity.ok(totalIncome);
     }
 
 }

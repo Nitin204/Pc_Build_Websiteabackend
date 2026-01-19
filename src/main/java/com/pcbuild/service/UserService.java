@@ -44,6 +44,10 @@ public class UserService {
         return userRepository.save(user);
     }
     
-    
+ // ✅ TOTAL USERS COUNT
+    public long getTotalUsersCount() {
+        return userRepository.count();
+    }
+
     
 }
