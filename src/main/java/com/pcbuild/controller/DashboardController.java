@@ -32,5 +32,7 @@ public class DashboardController {
     @GetMapping("/stats")
     public Object stats() {
         return dashboardService.stats();
+        
+        
     }
 }

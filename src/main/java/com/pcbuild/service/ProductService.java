@@ -1,8 +1,6 @@
 package com.pcbuild.service;
 
-
 import org.springframework.stereotype.Service;
-
 import com.pcbuild.model.Product;
 import com.pcbuild.repository.ProductRepository;
 
@@ -17,23 +15,28 @@ public class ProductService {
         this.repo = repo;
     }
 
-    public Product addProduct(String name) {
-        if (repo.existsByName(name)) {
-            throw new RuntimeException("Product already exists");
+    public List<Product> getAllProducts() {
+        return repo.findAll();
+    }
+
+    public Product addProduct(Product product) {
+
+        if (product.getName() == null || product.getName().isBlank()) {
+            throw new RuntimeException("Product name required");
         }
 
-        Product product = new Product();
-        product.setName(name);   // ✅ SET NAME
+        repo.findByNameIgnoreCase(product.getName())
+            .ifPresent(p -> {
+                throw new RuntimeException("Product already exists");
+            });
 
         return repo.save(product);
     }
 
+    public void deleteProduct(String name) {
+        repo.findByNameIgnoreCase(name)
+            .orElseThrow(() -> new RuntimeException("Product not found"));
 
-    public void deleteProduct(String id) {
-        repo.deleteById(id);
-    }
-
-    public List<Product> getAllProducts() {
-        return repo.findAll();
+        repo.deleteByNameIgnoreCase(name);
     }
 }

@@ -1,8 +1,6 @@
 package com.pcbuild.controller;
 
-
 import org.springframework.web.bind.annotation.*;
-
 import com.pcbuild.model.Product;
 import com.pcbuild.service.ProductService;
 
@@ -10,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin(origins = "http://localhost:5174") // React access
+@CrossOrigin(origins = "http://localhost:5174")
 public class ProductController {
 
     private final ProductService service;
@@ -19,26 +17,18 @@ public class ProductController {
         this.service = service;
     }
 
-    // ➕ Add Product
+    @GetMapping
+    public List<Product> getProducts() {
+        return service.getAllProducts();
+    }
+
     @PostMapping
     public Product addProduct(@RequestBody Product product) {
-        if (product.getName() == null || product.getName().isBlank()) {
-            throw new RuntimeException("Product name is required");
-        }
-        return service.addProduct(product.getName());
+        return service.addProduct(product);
     }
 
-
-    // ❌ Delete Product
-    @DeleteMapping("/{id}")
-    public String deleteProduct(@PathVariable String id) {
-        service.deleteProduct(id);
-        return "Product deleted successfully";
-    }
-
-    // 📦 Get Products (optional but useful)
-    @GetMapping
-    public List<Product> getAllProducts() {
-        return service.getAllProducts();
+    @DeleteMapping("/{name}")
+    public void deleteProduct(@PathVariable String name) {
+        service.deleteProduct(name);
     }
 }
