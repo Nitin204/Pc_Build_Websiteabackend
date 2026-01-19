@@ -13,4 +13,6 @@ public interface OrderRepository extends MongoRepository<Order, String> {
     List<Order> findTop5ByOrderByOrderDateDesc();
 
     List<Order> findByUserId(String userId);
+//    for the total count 
+    long count();
 }

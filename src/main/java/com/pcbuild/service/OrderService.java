@@ -53,5 +53,20 @@ public class OrderService {
     public List<Order> getOrdersByUserId(String userId) {
         return orderRepo.findByUserId(userId);
     }
+    
+//    Totoal count of the order  
+
+    public long getTotalOrderCount() {
+        return orderRepo.count();
+    }
+    
+    
+ // ✅ TOTAL INCOME (SUM OF ALL ORDERS)
+    public double getTotalIncome() {
+        return orderRepo.findAll()
+                .stream()
+                .mapToDouble(Order::getTotalAmount) // change field name if needed
+                .sum();
+    }
 
 }
