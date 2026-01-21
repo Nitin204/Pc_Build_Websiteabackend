@@ -23,12 +23,20 @@ public class CartController {
 
     @PostMapping("/add")
     public CartItem add(@RequestBody CartItem item) {
-        return service.addToCart(item);
+        try {
+            return service.addToCart(item);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @PutMapping("/qty/{id}/{qty}")
     public void updateQty(@PathVariable String id, @PathVariable int qty) {
-        service.updateQty(id, qty);
+        try {
+            service.updateQty(id, qty);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")

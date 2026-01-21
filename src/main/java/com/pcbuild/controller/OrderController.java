@@ -26,18 +26,22 @@ public class OrderController {
 
  // ✅ PLACE ORDER (PaymentCo.jsx)
     @PostMapping
-    public ResponseEntity<Order> placeOrder(@RequestBody Order order) {
-    	 User user = userRepository.findById(order.getUserId()).orElse(null);
+    public ResponseEntity<?> placeOrder(@RequestBody Order order) {
 
-    	    if (user != null) {
-    	        order.setUserName(user.getFirstName()+" "+user.getLastName());
-    	        order.setUserEmail(user.getEmail());
-    	    }
-        order.setOrderDate(LocalDateTime.now());
-        order.setStatus("Placed");
-        Order savedOrder = orderRepository.save(order);
-        return ResponseEntity.ok(savedOrder);
+        User user = userRepository.findById(order.getUserId()).orElse(null);
+        if (user != null) {
+            order.setUserName(user.getFirstName() + " " + user.getLastName());
+            order.setUserEmail(user.getEmail());
+        }
+
+        try {
+            Order saved = orderService.placeOrder(order);
+            return ResponseEntity.ok(saved);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
+
 
 
     // ✅ GET ALL ORDERS (Admin)
