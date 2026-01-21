@@ -1,14 +1,28 @@
-# Use Java 17
-FROM eclipse-temurin:17-jdk
+# Use Maven + Java 17 for build
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy your Spring Boot jar
-COPY target/app.jar app.jar
+# Copy pom.xml and download dependencies first (cached)
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-# Expose port (Render will use ${PORT})
+# Copy all source code
+COPY src ./src
+
+# Build the JAR
+RUN mvn clean package -DskipTests
+
+# Use lightweight JDK runtime for running
+FROM eclipse-temurin:17-jdk
+
+WORKDIR /app
+
+# Copy the jar from the build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose port
 EXPOSE 8181
 
-# Run the Spring Boot app
+# Run the app
 CMD ["java", "-jar", "app.jar"]
