@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.pcbuild.model.PreBuilt;
 import com.pcbuild.service.PreBuiltService;
 
-@CrossOrigin(origins = "http://localhost:5174")
+@CrossOrigin(origins = "https://pc-build-websiteadmin.vercel.app")
 @RestController
 @RequestMapping("/api/prebuilts")
 public class PreBuiltController {

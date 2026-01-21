@@ -10,7 +10,7 @@ import com.pcbuild.dto.AdminLoginRequest;
 import com.pcbuild.model.Admin;
 import com.pcbuild.service.AdminService;
 
-@CrossOrigin(origins = "http://localhost:5174") // Admin frontend port
+@CrossOrigin(origins = "https://pc-build-websiteadmin.vercel.app") // Admin frontend port
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {

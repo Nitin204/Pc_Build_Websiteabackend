@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/dashboard")
-@CrossOrigin(origins = "http://localhost:5174")
+@CrossOrigin(origins = "https://pc-build-websiteadmin.vercel.app")
 public class DashboardController {
 
     private final DashboardService dashboardService;

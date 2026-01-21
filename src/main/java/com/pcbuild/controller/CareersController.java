@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/careers")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "https://pc-build-website.vercel.app")
 public class CareersController {
 
     private final CareerRepository repository;

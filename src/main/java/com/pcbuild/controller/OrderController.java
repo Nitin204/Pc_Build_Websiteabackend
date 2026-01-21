@@ -14,7 +14,7 @@ import com.pcbuild.service.OrderService;
 
 @RestController
 @RequestMapping("/api/order")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "https://pc-build-website.vercel.app")
 public class OrderController {
 
     @Autowired

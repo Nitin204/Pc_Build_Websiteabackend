@@ -6,7 +6,7 @@ import com.pcbuild.model.CartItem;
 import com.pcbuild.service.CartService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "https://pc-build-website.vercel.app")
 @RequestMapping("/api/cart")
 public class CartController {
 

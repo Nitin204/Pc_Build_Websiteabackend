@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import com.pcbuild.model.Accessory;
 import com.pcbuild.service.AccessoryService;
 
-@CrossOrigin(origins = "http://localhost:5174") // Admin React Port
+@CrossOrigin(origins = "https://pc-build-websiteadmin.vercel.app") // Admin React Port
 @RestController
 @RequestMapping("/api/admin/accessories")
 public class AccessoryController {

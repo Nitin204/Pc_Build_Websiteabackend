@@ -16,7 +16,7 @@ import com.pcbuild.model.PCBuild;
 import com.pcbuild.service.PCBuildService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5174")
+@CrossOrigin(origins = "https://pc-build-websiteadmin.vercel.app")
 @RequestMapping("/api/pcbuilds")
 public class PCBuildController {
 

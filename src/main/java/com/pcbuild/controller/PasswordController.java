@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.pcbuild.repository.UserRepository;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "https://pc-build-website.vercel.app")
 @RestController
 @RequestMapping("/api/auth")
 public class PasswordController {
