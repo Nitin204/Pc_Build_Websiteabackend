@@ -1,11 +1,15 @@
 package com.pcbuild.controller;
 
+import com.pcbuild.dto.SalesChartDTO;
 import com.pcbuild.service.DashboardService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/dashboard")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5174")
 public class DashboardController {
 
     private final DashboardService dashboardService;
@@ -15,24 +19,9 @@ public class DashboardController {
     }
 
     @GetMapping("/sales")
-    public Object sales(@RequestParam String range) {
-        return dashboardService.salesTrend(range);
-    }
-
-    @GetMapping("/categories")
-    public Object categories() {
-        return dashboardService.topCategories();
-    }
-
-    @GetMapping("/recent-orders")
-    public Object recentOrders() {
-        return dashboardService.recentOrders();
-    }
-
-    @GetMapping("/stats")
-    public Object stats() {
-        return dashboardService.stats();
-        
-        
+    public ResponseEntity<List<SalesChartDTO>> sales(
+            @RequestParam(defaultValue = "30D") String range
+    ) {
+        return ResponseEntity.ok(dashboardService.salesChart(range));
     }
 }

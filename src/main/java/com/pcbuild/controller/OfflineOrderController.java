@@ -31,11 +31,17 @@ public class OfflineOrderController {
     public void deleteOrder(@PathVariable String id) {
         service.deleteOrder(id);
     }
- // ✅ EDIT OFFLINE ORDER
+
     @PutMapping("/{id}")
     public OfflineOrder updateOrder(
             @PathVariable String id,
             @RequestBody OfflineOrder order) {
         return service.updateOrder(id, order);
+    }
+
+    // ✅ TOTAL OFFLINE REVENUE
+    @GetMapping("/revenue")
+    public Double getTotalOfflineRevenue() {
+        return service.getTotalOfflineRevenue();
     }
 }

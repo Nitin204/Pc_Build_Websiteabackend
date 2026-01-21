@@ -1,91 +1,95 @@
 package com.pcbuild.service;
 
-import com.pcbuild.dto.*;
+import com.pcbuild.dto.SalesChartDTO;
+import com.pcbuild.model.OfflineOrder;
 import com.pcbuild.model.Order;
-import com.pcbuild.model.OrderItem;
+import com.pcbuild.repository.OfflineOrderRepository;
 import com.pcbuild.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.*;
 
 @Service
 public class DashboardService {
 
     private final OrderRepository orderRepo;
+    private final OfflineOrderRepository offlineRepo;
 
-    public DashboardService(OrderRepository orderRepo) {
+    public DashboardService(OrderRepository orderRepo,
+                            OfflineOrderRepository offlineRepo) {
         this.orderRepo = orderRepo;
+        this.offlineRepo = offlineRepo;
     }
 
-    // 📊 SALES TREND
-    public List<SalesPoint> salesTrend(String range) {
+    public List<SalesChartDTO> salesChart(String range) {
 
-        LocalDateTime from = switch (range) {
-            case "7D" -> LocalDateTime.now().minusDays(7);
-            case "12M" -> LocalDateTime.now().minusMonths(12);
-            default -> LocalDateTime.now().minusDays(30);
-        };
+        boolean monthWise = "12M".equals(range);
+        int days = range.equals("7D") ? 7 : range.equals("12M") ? 365 : 30;
 
-        List<Order> orders = orderRepo.findByOrderDateAfter(from);
+        LocalDate fromDate = LocalDate.now().minusDays(days);
 
-        Map<String, Double> map = new LinkedHashMap<>();
+        Map<String, Double> onlineMap = new HashMap<>();
+        Map<String, Double> offlineMap = new HashMap<>();
 
-        for (Order o : orders) {
-            String key = o.getOrderDate().toLocalDate().toString();
-            map.put(key, map.getOrDefault(key, 0.0) + o.getTotalAmount());
+        // ===== ONLINE =====
+        for (Order o : orderRepo.findAll()) {
+            if (o.getOrderDate() == null) continue;
+
+            LocalDate date = o.getOrderDate().toLocalDate();
+            if (date.isBefore(fromDate)) continue;
+
+            String key = monthWise
+                    ? YearMonth.from(date).toString()
+                    : date.toString();
+
+            onlineMap.put(key,
+                    onlineMap.getOrDefault(key, 0.0) + o.getTotalAmount());
         }
 
-        List<SalesPoint> result = new ArrayList<>();
-        map.forEach((k, v) -> result.add(new SalesPoint(k, v)));
+        // ===== OFFLINE (FIXED ✅) =====
+        for (OfflineOrder o : offlineRepo.findAll()) {
+            if (o.getOrderDate() == null) continue;
 
-        return result;
-    }
+            LocalDate date = o.getOrderDate().toLocalDate();
+            if (date.isBefore(fromDate)) continue;
 
-    // 📦 TOP CATEGORIES
-    public List<CategoryDTO> topCategories() {
+            String key = monthWise
+                    ? YearMonth.from(date).toString()
+                    : date.toString();
 
-        List<Order> orders = orderRepo.findAll();
-        Map<String, Integer> map = new HashMap<>();
+            offlineMap.put(key,
+                    offlineMap.getOrDefault(key, 0.0) + o.getTotal());
+        }
 
-        for (Order o : orders) {
-            if (o.getItems() == null) continue;
+        // ===== RESPONSE =====
+        List<SalesChartDTO> result = new ArrayList<>();
 
-            for (OrderItem item : o.getItems()) {
-                map.put(
-                        item.getClass(),
-                        map.getOrDefault(item.getClass(), 0) + item.getQuantity()
-                );
+        if (monthWise) {
+            for (int i = 11; i >= 0; i--) {
+                YearMonth ym = YearMonth.now().minusMonths(i);
+                String key = ym.toString();
+
+                result.add(new SalesChartDTO(
+                        key,
+                        onlineMap.getOrDefault(key, 0.0),
+                        offlineMap.getOrDefault(key, 0.0)
+                ));
+            }
+        } else {
+            for (int i = days - 1; i >= 0; i--) {
+                LocalDate d = LocalDate.now().minusDays(i);
+                String key = d.toString();
+
+                result.add(new SalesChartDTO(
+                        key,
+                        onlineMap.getOrDefault(key, 0.0),
+                        offlineMap.getOrDefault(key, 0.0)
+                ));
             }
         }
 
-        List<CategoryDTO> list = new ArrayList<>();
-        map.forEach((k, v) -> list.add(new CategoryDTO(k, v)));
-
-        return list;
+        return result;
     }
-
-    // 🧾 RECENT ORDERS
-    public List<Order> recentOrders() {
-        return orderRepo.findTop5ByOrderByOrderDateDesc();
-    }
-
-    // 📈 STATS GRID
-    public List<StatDTO> stats() {
-
-        List<Order> orders = orderRepo.findAll();
-
-        int totalOrders = orders.size();
-        double revenue = orders.stream()
-                .mapToDouble(Order::getTotalAmount)
-                .sum();
-
-        return List.of(
-                new StatDTO("Total Orders", String.valueOf(totalOrders)),
-                new StatDTO("Revenue", "₹ " + revenue),
-                new StatDTO("New Users", "LIVE")
-        );
-        
-    }
-    
 }

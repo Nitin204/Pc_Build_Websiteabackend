@@ -1,5 +1,6 @@
 package com.pcbuild.model;
 
+import java.time.LocalDateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,9 +19,10 @@ public class OfflineOrder {
     private double gst;
     private double total;
     private String payment;
-    private String dateTime;
 
-    // Getters & Setters
+    private LocalDateTime orderDate; // ✅ FIX
+
+    // ===== Getters / Setters =====
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -51,6 +53,6 @@ public class OfflineOrder {
     public String getPayment() { return payment; }
     public void setPayment(String payment) { this.payment = payment; }
 
-    public String getDateTime() { return dateTime; }
-    public void setDateTime(String dateTime) { this.dateTime = dateTime; }
+    public LocalDateTime getOrderDate() { return orderDate; }
+    public void setOrderDate(LocalDateTime orderDate) { this.orderDate = orderDate; }
 }

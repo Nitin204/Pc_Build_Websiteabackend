@@ -82,6 +82,10 @@ public class Order {
 
     private Address address;
     private List<OrderItem> items;
+	public Object getCreatedAt() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
     // getters & setters
 }

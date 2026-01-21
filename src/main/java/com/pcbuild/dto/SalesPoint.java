@@ -1,14 +1,20 @@
 package com.pcbuild.dto;
 
 public class SalesPoint {
-    private String name;
-    private double v;
 
-    public SalesPoint(String name, double v) {
-        this.name = name;
-        this.v = v;
+    private String label;
+    private double value;
+
+    public SalesPoint(String label, double value) {
+        this.label = label;
+        this.value = value;
     }
 
-    public String getName() { return name; }
-    public double getV() { return v; }
+    public String getLabel() {
+        return label;
+    }
+
+    public double getValue() {
+        return value;
+    }
 }

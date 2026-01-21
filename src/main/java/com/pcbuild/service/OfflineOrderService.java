@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import com.pcbuild.model.OfflineOrder;
 import com.pcbuild.repository.OfflineOrderRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,6 +17,9 @@ public class OfflineOrderService {
     }
 
     public OfflineOrder saveOrder(OfflineOrder order) {
+        if (order.getOrderDate() == null) {
+            order.setOrderDate(LocalDateTime.now()); // ✅ auto date
+        }
         return repo.save(order);
     }
 
@@ -26,6 +30,7 @@ public class OfflineOrderService {
     public void deleteOrder(String id) {
         repo.deleteById(id);
     }
+
     public OfflineOrder updateOrder(String id, OfflineOrder updatedOrder) {
         OfflineOrder existing = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Offline order not found"));
@@ -39,8 +44,13 @@ public class OfflineOrderService {
         existing.setGst(updatedOrder.getGst());
         existing.setTotal(updatedOrder.getTotal());
         existing.setPayment(updatedOrder.getPayment());
-        existing.setDateTime(updatedOrder.getDateTime());
+        existing.setOrderDate(updatedOrder.getOrderDate());
 
         return repo.save(existing);
+    }
+
+    public Double getTotalOfflineRevenue() {
+        Double total = repo.getTotalOfflineRevenue();
+        return total != null ? total : 0.0;
     }
 }
