@@ -10,7 +10,7 @@ import com.pcbuild.dto.AdminLoginRequest;
 import com.pcbuild.model.Admin;
 import com.pcbuild.service.AdminService;
 
-@CrossOrigin(origins = "*") // ✅ safe for Render
+@CrossOrigin(origins = "https://pc-build-websiteadmin.vercel.app") // ✅ safe for Render
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
