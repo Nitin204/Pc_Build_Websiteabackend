@@ -10,32 +10,37 @@ import com.pcbuild.dto.AdminLoginRequest;
 import com.pcbuild.model.Admin;
 import com.pcbuild.service.AdminService;
 
+@CrossOrigin(origins = "*") // ✅ safe for Render
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(origins = "https://pc-build-websiteadmin.vercel.app")
 public class AdminController {
 
-    private final AdminService adminService;
+    @Autowired
+    private AdminService adminService;
 
-    public AdminController(AdminService adminService) {
-        this.adminService = adminService;
+    // 🔥 CREATE ADMIN (RUN ONCE)
+    @PostMapping("/create")
+    public ResponseEntity<?> createAdmin(@RequestBody Admin admin) {
+        return ResponseEntity.ok(adminService.createAdmin(admin));
     }
 
+    // 🔐 ADMIN LOGIN
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AdminLoginRequest request) {
-
-        Optional<Admin> admin = adminService.login(
-                request.getUsername(),
-                request.getPassword()
-        );
+        Optional<Admin> admin =
+                adminService.login(request.getUsername(), request.getPassword());
 
         if (admin.isPresent()) {
             return ResponseEntity.ok(admin.get());
         }
-
-        return ResponseEntity
-                .status(401)
-                .body("Invalid Admin Credentials");
+        return ResponseEntity.status(401).body("Invalid Admin Credentials");
     }
 
+    // 🔍 GET ADMIN
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getAdmin(@PathVariable String username) {
+        return adminService.getByUsername(username)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
