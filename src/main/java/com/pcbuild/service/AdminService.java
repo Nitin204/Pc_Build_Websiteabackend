@@ -21,43 +21,27 @@ public class AdminService {
 
     // ✅ LOGIN
     public Optional<Admin> login(String username, String password) {
-        Optional<Admin> admin = adminRepository.findByUsername(username);
 
-        if (admin.isPresent() && admin.get().getPassword().equals(password)) {
-            return admin;
+        Optional<Admin> adminOpt = adminRepository.findByUsername(username);
+
+        if (adminOpt.isEmpty()) {
+            System.out.println("❌ Username not found");
+            return Optional.empty();
         }
+
+        Admin admin = adminOpt.get();
+
+        System.out.println("DB Username: " + admin.getUsername());
+        System.out.println("DB Password: " + admin.getPassword());
+        System.out.println("REQ Password: " + password);
+
+        if (admin.getPassword().equals(password)) {
+            System.out.println("✅ Login success");
+            return Optional.of(admin);
+        }
+
+        System.out.println("❌ Password mismatch");
         return Optional.empty();
-    }
-
-    // ✅ UPDATE ADMIN
-    public Admin updateAdmin(String username, Admin updatedAdmin) {
-
-        Admin admin = adminRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Admin not found"));
-
-        admin.setUsername(updatedAdmin.getUsername());
-        admin.setPassword(updatedAdmin.getPassword());
-
-        return adminRepository.save(admin);
-    }
-    public Admin updateUsername(String oldUsername, String newUsername) {
-
-        // check old username exists
-        Admin admin = adminRepository.findByUsername(oldUsername)
-                .orElseThrow(() -> new RuntimeException("Old username not found"));
-
-        // check new username already exists
-        if (adminRepository.findByUsername(newUsername).isPresent()) {
-            throw new RuntimeException("Username already taken");
-        }
-
-        admin.setUsername(newUsername);
-        return adminRepository.save(admin);
-    }
-    
-    
-    public Optional<Admin> getAdminByUsername(String username) {
-        return adminRepository.findByUsername(username);
     }
 
 }

@@ -24,13 +24,18 @@ public class AdminController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AdminLoginRequest request) {
 
-        Optional<Admin> adminOpt =
-                adminService.login(request.getUsername(), request.getPassword());
+        Optional<Admin> admin = adminService.login(
+                request.getUsername(),
+                request.getPassword()
+        );
 
-        if (adminOpt.isPresent()) {
-            return ResponseEntity.ok(adminOpt.get());
+        if (admin.isPresent()) {
+            return ResponseEntity.ok(admin.get());
         }
 
-        return ResponseEntity.status(401).body("Invalid Admin Credentials");
+        return ResponseEntity
+                .status(401)
+                .body("Invalid Admin Credentials");
     }
+
 }
